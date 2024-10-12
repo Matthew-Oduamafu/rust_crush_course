@@ -25,14 +25,20 @@ impl Shot {
         // - return 2 points if `self` is a `Shot::Hit(x)` where x < 3.0
         // - return 1 point if `self` is a `Shot::Hit(x)` where x >= 3.0
         // - return 0 points if `self` is a Miss
+        // match self {
+        //     Shot::Bullseye => {
+        //         5
+        //     }
+        //     Shot::Hit(x) => {
+        //         if x < 3.0 { 2 } else { 1 }
+        //     }
+        //     Shot::Miss => { 0 }
+        // }
         match self {
-            Shot::Bullseye => {
-                5
-            }
-            Shot::Hit(x) => {
-                if x < 3.0 { 2 } else { 1 }
-            }
-            Shot::Miss => { 0 }
+            Shot::Bullseye => 5,
+            Shot::Hit(x) if x < 3.0 => 2,
+            Shot::Hit(x) => 1,
+            Shot::Miss => 0,
         }
     }
 }
@@ -53,15 +59,22 @@ fn main() {
 
     for coord in arrow_coords {
         coord.print_description();
-        let distance_from_center = coord.distance_from_center();
+        // let distance_from_center = coord.distance_from_center();
+        //
+        // if distance_from_center < 1.0 {
+        //     shots.push(Shot::Bullseye);
+        // } else if distance_from_center >= 1.0 && distance_from_center <= 5.0 {
+        //     shots.push(Shot::Hit(distance_from_center));
+        // } else {
+        //     shots.push(Shot::Miss)
+        // }
 
-        if distance_from_center < 1.0 {
-            shots.push(Shot::Bullseye);
-        } else if distance_from_center >= 1.0 && distance_from_center <= 5.0 {
-            shots.push(Shot::Hit(distance_from_center));
-        } else {
-            shots.push(Shot::Miss)
-        }
+        let shot = match coord.distance_from_center() {
+            x if x < 1.0 => Shot::Bullseye,
+            x if x < 5.0 => Shot::Hit(x),
+            _ => Shot::Miss,
+        };
+        shots.push(shot);
     }
 
     let mut total = 0;
